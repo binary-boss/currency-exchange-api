@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd ">
+    <munit:config name="currency-exchange-api-apikit-test.xml" />
+    <http:request-config name="HTTP_Request_Configuration" basePath="/api">
+        <http:request-connection host="localhost" port="8081" />
+    </http:request-config>
+    <munit:test name="get:\convertor:currency-exchange-api-config-200-application\json-FlowTest" description="Verifying functionality of [get:\convertor:currency-exchange-api-config-200-application\json]">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="currency-exchange-api-main" />
+            <munit:enable-flow-source value="get:\convertor:currency-exchange-api-config" />
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <http:request config-ref="HTTP_Request_Configuration" method="GET" path="/convertor">
+                <http:headers><![CDATA[#[{"Accept":"application/json"}]]]></http:headers>
+                <http:query-params><![CDATA[#[{"toCurrency":"INR","Amount":"1000","fromCurrency":"USD"}]]]></http:query-params>
+            </http:request>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(200)]" message="The HTTP Status code is not correct!" doc:name="Assert That Status Code is 200" />
+			<munit-tools:assert-that doc:name="Assert that" doc:id="be601407-6c61-464c-8053-4298ded206ae" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+        </munit:validation>
+    </munit:test>
+    <munit:test name="get:\convertor:currency-exchange-api-config-400-application\json-FlowTest" description="Verifying functionality of [get:\convertor:currency-exchange-api-config-400-application\json]">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="currency-exchange-api-main" />
+            <munit:enable-flow-source value="get:\convertor:currency-exchange-api-config" />
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <http:request config-ref="HTTP_Request_Configuration" method="GET" path="/convertor">
+                <http:headers><![CDATA[#[{"Accept":"application/json"}]]]></http:headers>
+                <http:query-params><![CDATA[#[{"toCurrency":"INR","fromCurrency":"USD"}]]]></http:query-params>
+                <http:response-validator>
+                    <http:success-status-code-validator values="400" />
+                </http:response-validator>
+            </http:request>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(400)]" message="The HTTP Status code is not correct!" doc:name="Assert That Status Code is 400" />
+			<munit-tools:assert-that doc:name="Assert that" doc:id="897e0933-db7e-422f-a809-f6d98ee60928" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+        </munit:validation>
+    </munit:test>
+    <munit:test name="get:\convertor:currency-exchange-api-config-404-application\json-FlowTest" description="Verifying functionality of [get:\convertor:currency-exchange-api-config-404-application\json]">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="currency-exchange-api-main" />
+            <munit:enable-flow-source value="get:\convertor:currency-exchange-api-config" />
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <http:request config-ref="HTTP_Request_Configuration" method="GET" path="/convertors">
+                <http:headers><![CDATA[#[{"Accept":"application/json"}]]]></http:headers>
+                <http:query-params><![CDATA[#[{"toCurrency":"INR","Amount":"1000","fromCurrency":"USD"}]]]></http:query-params>
+                <http:response-validator>
+                    <http:success-status-code-validator values="404" />
+                </http:response-validator>
+            </http:request>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(404)]" message="The HTTP Status code is not correct!" doc:name="Assert That Status Code is 404" />
+			<munit-tools:assert-that doc:name="Assert that" doc:id="b355bac0-d0c4-4155-b61c-97485ea2cc0c" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+        </munit:validation>
+    </munit:test>
+    <munit:test name="get:\convertor:currency-exchange-api-config-405-application\json-FlowTest" description="Verifying functionality of [get:\convertor:currency-exchange-api-config-405-application\json]">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="currency-exchange-api-main" />
+            <munit:enable-flow-source value="get:\convertor:currency-exchange-api-config" />
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <http:request config-ref="HTTP_Request_Configuration" method="PUT" path="/convertor">
+                <http:headers><![CDATA[#[{"Accept":"application/json"}]]]></http:headers>
+                <http:query-params><![CDATA[#[{"toCurrency":"INR","Amount":"1000","fromCurrency":"USD"}]]]></http:query-params>
+                <http:response-validator>
+                    <http:success-status-code-validator values="405" />
+                </http:response-validator>
+            </http:request>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(405)]" message="The HTTP Status code is not correct!" doc:name="Assert That Status Code is 405" />
+			<munit-tools:assert-that doc:name="Assert that" doc:id="abe67cfb-b11e-4fab-827e-a75a1e65eb95" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+        </munit:validation>
+    </munit:test>
+    <munit:test name="get:\convertor:currency-exchange-api-config-406-application\json-FlowTest" description="Verifying functionality of [get:\convertor:currency-exchange-api-config-406-application\json]" ignore="true">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="currency-exchange-api-main" />
+            <munit:enable-flow-source value="get:\convertor:currency-exchange-api-config" />
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <http:request config-ref="HTTP_Request_Configuration" method="GET" path="/convertor">
+                <http:headers>#[{"Accept":"application/json"}]</http:headers>
+                <http:query-params>#[{"toCurrency":"","Amount":"","fromCurrency":""}]</http:query-params>
+                <http:response-validator>
+                    <http:success-status-code-validator values="406" />
+                </http:response-validator>
+            </http:request>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(406)]" message="The HTTP Status code is not correct!" doc:name="Assert That Status Code is 406" />
+			<munit-tools:assert-that doc:name="Assert that" doc:id="b2b979a0-81d2-4883-b842-324c748e39d7" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+        </munit:validation>
+    </munit:test>
+</mule>

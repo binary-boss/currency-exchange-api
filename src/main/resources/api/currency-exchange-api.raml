@@ -1,0 +1,78 @@
+#%RAML 1.0
+title: currencyConvertor
+baseUri: currency-exchange-api-aditya.us-e2.cloudhub.io/api
+types:
+  currencyConvertor: !include /responseDatatype.raml
+securitySchemes:
+  oauth_2_0:
+        description: |
+            Mule OAuth 2.0.
+        type: OAuth 2.0
+        describedBy:
+            headers:
+                Authorization:
+                    description: |
+                      Used to send a valid OAuth 2 access token. Do not use with the "access_token" query string parameter.
+                    type: string
+            queryParameters:
+                access_token:
+                    description: |
+                      Used to send a valid OAuth 2 access token. Do not use together with the "Authorization" header
+                    type: string
+            responses:
+                401:
+                    description: |
+                        Bad or expired token.
+                403:
+                    description: |
+                        Bad OAuth request.
+        settings:
+          authorizationUri: http://0.0.0.0:8081/authorize
+          accessTokenUri: http://0.0.0.0:8081/access-token
+          authorizationGrants: [client_credentials]
+/convertor:
+  get:
+    securedBy: [oauth_2_0]
+    queryParameters:
+      fromCurrency:
+        required: true
+      toCurrency:
+        required: true
+      Amount:
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            type: currencyConvertor
+            example: !include /CurrencyExchangeExample.raml
+      400:
+        body:
+          application/json:
+            example: |
+                {"message": "Bad Request"}
+      404:
+        body:
+          application/json:
+            example: |
+                {"message": "Not found"}
+      405:
+        body:
+          application/json:
+            example: |
+                {"message": "Method not allowed"}
+      406:
+        body:
+          application/json:
+            example: |
+                {"message": "Not Acceptable"}
+      415:
+        body:
+          application/json:
+            example: |
+                {"message": "Unsupported media type"}
+      501:
+        body:
+          application/json:
+            example: |
+                {"message": "Not Implemented"}
